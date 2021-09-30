@@ -49,7 +49,7 @@ class UserReview(Resource):
 
 class User(Resource):
     @classmethod
-    def get(cls,user_id):
+    def get(cls,user_id:int):
         user = UserModel.find_by_id(user_id)
         if not user : 
             return {'message':'User not found'}, 404

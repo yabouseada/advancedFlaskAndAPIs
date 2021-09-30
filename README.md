@@ -1,18 +1,18 @@
-# restAPI2-SQLA 
+# AdvancedFlaskAndAPIs 
 
 
 ##  Requirements:
 ###     (RECOMENDATION virtual env)
 
-            Python version: 3.9.7
+    -Python version: 3.9.7
 
-                Flask
-                Flask-RESTful
-                Flask-JWT
-                Flask-SQLAlchemy
+        -Flask
+        -Flask-RESTful
+        -Flask-JWT
+        -Flask-SQLAlchemy
 
 ##  Description
         In this proyect I am creating REST API application that stores items,stores,users and retrive them
 
 
- # advancedFlaskAndAPIs 
+

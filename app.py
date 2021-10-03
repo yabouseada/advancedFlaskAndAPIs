@@ -2,6 +2,7 @@ from blacklist import BLACKLIST
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api, reqparse
 from flask_jwt_extended import JWTManager
+from ma import ma
 
 from resources.user import (
     UserRegister,
@@ -22,7 +23,6 @@ app.config["JWT_SECRET_KEY"] = "YAHIA"
 # app.config['JWT_BLACKLIST_ENABLED']=True
 # app.config['JWT_BLACKLIST_TOKEN_CHECKS']=['access','refresh']
 api = Api(app)
-db.init_app(app)
 
 
 @app.before_first_request
@@ -77,4 +77,6 @@ api.add_resource(UserLogin, "/login")
 api.add_resource(TokenRefresh, "/refresh")
 api.add_resource(UserLogout, "/logout")
 if __name__ == "__main__":
+    db.init_app(app)
+    ma.init_app(app)
     app.run(port=5000, debug=True)

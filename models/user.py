@@ -2,8 +2,6 @@ import sqlite3
 from db import db
 from typing import Dict, Union
 
-UserJSON = [str, Union[int, str, str]]
-
 
 class UserModel(db.Model):
     __tablename__ = "users"
@@ -14,9 +12,6 @@ class UserModel(db.Model):
     def __init__(self, username: str, password: str):
         self.username = username
         self.password = password
-
-    def json(self) -> UserJSON:
-        return {"id": self.id, "username": self.username, "password": self.password}
 
     @classmethod
     def find_by_username(cls, username: str) -> "UserModel":

@@ -15,7 +15,6 @@ from blacklist import BLACKLIST
 from marshmallow import ValidationError
 
 
-BLANK_ERROR = "'{}' CANNOT BE BLANK"
 USER_ALREADY_EXISTS = "A USER WITH THAT USERNAME ALREADY EXISTS"
 CREATED_SUCCESSFULLY = "USE CREATED SUCCESSFULLY"
 USER_NOT_FOUND = "USER NOT FOUND"
@@ -59,7 +58,7 @@ class User(Resource):
         return user_schema.dump(user)
 
     @classmethod
-    def delete(cls, user_id):
+    def delete(cls, user_id: int):
         user = UserModel.find_by_id(user_id)
         if not user:
             return {"message": USER_NOT_FOUND}, 404
@@ -75,9 +74,9 @@ class UserLogin(Resource):
         except ValidationError as err:
             return err.messages, 400
 
-        user = UserModel.find_by_username(user_data["username"])
+        user = UserModel.find_by_username(user_data.username)
 
-        if user and safe_str_cmp(user.password, user_data["password"]):
+        if user and safe_str_cmp(user.password, user_data.password):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {"access_token": access_token, "refresh_token": refresh_token}, 200

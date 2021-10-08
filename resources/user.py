@@ -21,6 +21,9 @@ USER_NOT_FOUND = "USER NOT FOUND"
 USER_DELETED = "USER DELETED"
 INVALID_CREDENTIALS = "INVALID CREDENTIAS"
 USER_LOGGED_OUT = "USER <id={user_id}> LOGGED OUT"
+NOT_CONFIRMED_ERROR = (
+    "you have not confirmed your registration, please check your email <{}>."
+)
 
 user_schema = UserSchema()
 
@@ -36,7 +39,6 @@ class UserRegister(Resource):
         if UserModel.find_by_username(user.username):
             return {"message": USER_ALREADY_EXISTS}, 400
 
-        user = UserModel(**user)
         user.save_to_db()
 
         return {"message": CREATED_SUCCESSFULLY}, 201
@@ -77,10 +79,14 @@ class UserLogin(Resource):
         user = UserModel.find_by_username(user_data.username)
 
         if user and safe_str_cmp(user.password, user_data.password):
-            access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_refresh_token(user.id)
-            return {"access_token": access_token, "refresh_token": refresh_token}, 200
-
+            if user.activated:
+                access_token = create_access_token(identity=user.id, fresh=True)
+                refresh_token = create_refresh_token(user.id)
+                return {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                }, 200
+            return {"message": NOT_CONFIRMED_ERROR.format(user.username)}, 400
         return {"message": INVALID_CREDENTIALS}, 401
 
 

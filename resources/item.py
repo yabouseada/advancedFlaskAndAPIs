@@ -22,7 +22,7 @@ class Item(Resource):
 
         item = ItemModel.find_by_name(name)
         if item:
-            return item_schema
+            return item_schema.dump(item)
 
         return {"message": ITEM_NOT_FOUND}, 404
 

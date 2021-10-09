@@ -115,5 +115,5 @@ class UserConfirmed(Resource):
             return {"message": USER_NOT_FOUND}
 
         user.activated = True
-        user.save_to_db
+        user.save_to_db()
         return {"message": USER_CONFIRMED}, 200

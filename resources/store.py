@@ -16,7 +16,7 @@ class Store(Resource):
     def get(cls, name: str):
         store = StoreModel.find_by_name(name)
         if store:
-            return store_schema.dump()
+            return store_schema.dump(store)
         return {"message": STORE_NOT_FOUND}, 404
 
     @classmethod
@@ -30,7 +30,7 @@ class Store(Resource):
         except:
             return {"message": ERROR_INSERTING}, 500
 
-        return store_schema.dump(), 201
+        return store_schema.dump(store), 201
 
     @classmethod
     def delete(cls, name: str):

@@ -12,15 +12,17 @@ from resources.user import (
     UserLogin,
     TokenRefresh,
     UserLogout,
+    UserConfirmed,
 )
 
 from db import db
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
-app.config["JWT_SECRET_KEY"] = "YAHIA"
+app.config["JWT_SECRET_KEY"] = "PC"
 # app.config['JWT_BLACKLIST_ENABLED']=True
 # app.config['JWT_BLACKLIST_TOKEN_CHECKS']=['access','refresh']
 api = Api(app)
@@ -81,6 +83,7 @@ api.add_resource(Item, "/item/<string:name>")
 api.add_resource(ItemList, "/itemlist")
 api.add_resource(StoreList, "/storelist")
 api.add_resource(Store, "/store/<string:name>")
+api.add_resource(UserConfirmed, "/confirmed/<int:user_id>")
 if __name__ == "__main__":
     db.init_app(app)
     ma.init_app(app)

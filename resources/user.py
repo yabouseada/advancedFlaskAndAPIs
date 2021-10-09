@@ -24,17 +24,15 @@ USER_LOGGED_OUT = "USER <id={user_id}> LOGGED OUT"
 NOT_CONFIRMED_ERROR = (
     "you have not confirmed your registration, please check your email <{}>."
 )
-
+USER_CONFIRMED = "YOUR USER HAS BEEN CONFIRMED"
 user_schema = UserSchema()
 
 
 class UserRegister(Resource):
     @classmethod
     def post(cls):
-        try:
-            user = user_schema.load(request.get_json())
-        except ValidationError as err:
-            return err.messages, 400
+        user_json = request.get_json()
+        user = user_schema.load(user_json)
 
         if UserModel.find_by_username(user.username):
             return {"message": USER_ALREADY_EXISTS}, 400
@@ -107,3 +105,15 @@ class TokenRefresh(Resource):
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {"access_token": new_token}, 200
+
+
+class UserConfirmed(Resource):
+    @classmethod
+    def get(cls, user_id: int):
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return {"message": USER_NOT_FOUND}
+
+        user.activated = True
+        user.save_to_db
+        return {"message": USER_CONFIRMED}, 200

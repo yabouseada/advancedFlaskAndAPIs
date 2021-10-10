@@ -9,12 +9,13 @@ from flask_jwt_extended import (
     get_jwt,
 )
 from flask_restful import Resource
+from models import confirmation
 from models.user import UserModel
 from schemas.user import UserSchema
 from blacklist import BLACKLIST
 from marshmallow import ValidationError
-from email_validator import validate_email, EmailNotValidError
 import re
+from models.confirmation import ConfirmationModel
 
 USER_ALREADY_EXISTS = "A USER WITH THAT USERNAME ALREADY EXISTS"
 CREATED_SUCCESSFULLY = "USE CREATED SUCCESSFULLY"
@@ -43,16 +44,20 @@ class UserRegister(Resource):
             user.email,
         )
 
-        # if match:
-        # print("your email is working")
+        if match:
+            print("your email is working")
+            try:
+                user.save_to_db()
+                confirmation = ConfirmationModel(user.id)
+                confirmation.save_to_db()
+                user.send_confirmation_email()
 
-        user.save_to_db()
-        user.send_confirmation_email()
+                return {"message": CREATED_SUCCESSFULLY}, 201
+            except:
+                user.delete_from_db()
 
-        return {"message": CREATED_SUCCESSFULLY}, 201
-
-        # else:
-        #     return {"message": "bady email"}
+        else:
+            return {"message": "bady email"}
 
 
 class UserReview(Resource):
@@ -91,7 +96,8 @@ class UserLogin(Resource):
         user = UserModel.find_by_username(user_data.username)
 
         if user and safe_str_cmp(user.password, user_data.password):
-            if user.activated:
+            confirmation = user.most_recent_confirmation
+            if confirmation and confirmation.confirmed:
                 access_token = create_access_token(identity=user.id, fresh=True)
                 refresh_token = create_refresh_token(user.id)
                 return {
@@ -119,15 +125,3 @@ class TokenRefresh(Resource):
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {"access_token": new_token}, 200
-
-
-class UserConfirmed(Resource):
-    @classmethod
-    def get(cls, user_id: int):
-        user = UserModel.find_by_id(user_id)
-        if not user:
-            return {"message": USER_NOT_FOUND}
-
-        user.activated = True
-        user.save_to_db()
-        return {"message": USER_CONFIRMED}, 200

@@ -13,7 +13,8 @@ from models.user import UserModel
 from schemas.user import UserSchema
 from blacklist import BLACKLIST
 from marshmallow import ValidationError
-
+from email_validator import validate_email, EmailNotValidError
+import re
 
 USER_ALREADY_EXISTS = "A USER WITH THAT USERNAME ALREADY EXISTS"
 CREATED_SUCCESSFULLY = "USE CREATED SUCCESSFULLY"
@@ -37,10 +38,21 @@ class UserRegister(Resource):
         if UserModel.find_by_username(user.username):
             return {"message": USER_ALREADY_EXISTS}, 400
 
+        match = re.match(
+            "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$",
+            user.email,
+        )
+
+        # if match:
+        # print("your email is working")
+
         user.save_to_db()
         user.send_confirmation_email()
 
         return {"message": CREATED_SUCCESSFULLY}, 201
+
+        # else:
+        #     return {"message": "bady email"}
 
 
 class UserReview(Resource):

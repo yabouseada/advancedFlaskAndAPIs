@@ -9,7 +9,7 @@ class StoreModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
 
-    items = db.relationship("ItemModel", lazy="dynamic")
+    items = db.relationship("ItemModel", lazy="dynamic", overlaps="store")
 
     @classmethod
     def find_by_name(cls, name: str) -> "StoreModel":

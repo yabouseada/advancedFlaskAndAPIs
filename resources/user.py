@@ -38,6 +38,7 @@ class UserRegister(Resource):
             return {"message": USER_ALREADY_EXISTS}, 400
 
         user.save_to_db()
+        user.send_confirmation_email()
 
         return {"message": CREATED_SUCCESSFULLY}, 201
 
@@ -69,8 +70,9 @@ class User(Resource):
 class UserLogin(Resource):
     @classmethod
     def post(cls):
+        user_json = request.get_json()
         try:
-            user_data = user_schema.load(request.get_json())
+            user_data = user_schema.load(user_json, partial=("email",))
         except ValidationError as err:
             return err.messages, 400
 

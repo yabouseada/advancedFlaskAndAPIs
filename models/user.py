@@ -18,7 +18,10 @@ class UserModel(db.Model):
     password = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(80), nullable=False, unique=True)
     confimation = db.relationship(
-        "ConfirmationModel", lazy="dynamic", cascade="all,delete-orphan"
+        "ConfirmationModel",
+        lazy="dynamic",
+        cascade="all,delete-orphan",
+        backref="users",
     )
 
     @property

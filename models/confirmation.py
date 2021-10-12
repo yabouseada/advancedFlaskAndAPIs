@@ -2,6 +2,7 @@ from db import db
 from uuid import uuid4
 from time import time
 
+
 CONFIRMATION_EXPIRATION_DELTA = 1800  # SECONDS
 
 
@@ -11,7 +12,6 @@ class ConfirmationModel(db.Model):
     expire_at = db.Column(db.Integer, nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    user = db.relationship("UserModel")
 
     def __init__(self, user_id: int, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -19,6 +19,8 @@ class ConfirmationModel(db.Model):
         self.id = uuid4().hex
         self.expire_at = int(time()) + CONFIRMATION_EXPIRATION_DELTA
         self.confirmed = False
+
+    user = db.relationship("UserModel")
 
     @classmethod
     def find_by_id(cls, _id: int) -> "ConfirmationModel":

@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_restful import Resource, Api, reqparse
 from flask_jwt_extended import JWTManager
 from ma import ma
+from models import confirmation
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 from resources.user import (
@@ -12,8 +13,8 @@ from resources.user import (
     UserLogin,
     TokenRefresh,
     UserLogout,
-    UserConfirmed,
 )
+from resources.confirmation import ConfirmationByUser, Confirmation
 
 from db import db
 
@@ -83,7 +84,8 @@ api.add_resource(Item, "/item/<string:name>")
 api.add_resource(ItemList, "/itemlist")
 api.add_resource(StoreList, "/storelist")
 api.add_resource(Store, "/store/<string:name>")
-api.add_resource(UserConfirmed, "/confirmed/<int:user_id>")
+api.add_resource(Confirmation, "/confirmation/<string:confirmation_id>")
+api.add_resource(ConfirmationByUser, "/cofirmation/user/<int:user_id>")
 if __name__ == "__main__":
     db.init_app(app)
     ma.init_app(app)

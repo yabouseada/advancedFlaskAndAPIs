@@ -62,7 +62,7 @@ class Item(Resource):
 
     @classmethod
     def put(cls, name: str):
-        item_json = request.get_json
+        item_json = request.get_json()
 
         item = ItemModel.find_by_name(name)
 

@@ -1,11 +1,4 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
-
-DBSession = scoped_session(sessionmaker())
-Base = declarative_base()
-
-
-def initialize_sql(engine):
-    DBSession.configure(bind=engine)
-    Base.metadata.bind = engine
-    Base.metadata.create_all(engine)
+from models.confirmation import ConfirmationModel
+from models.item import ItemModel
+from models.store import StoreModel
+from models.user import UserModel
